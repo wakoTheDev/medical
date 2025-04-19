@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediCare Kenya -Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f9ff;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-image: url('https://images.unsplash.com/photo-1581093450021-4a7360e9a7e1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .login-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 450px;
+            padding: 2.5rem;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        
+        .logo {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .logo img {
+            height: 60px;
+            margin-bottom: 1rem;
+        }
+        
+        .logo h1 {
+            color: #0066cc;
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+        
+        .logo p {
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+        
+        .login-form .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .login-form label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #444;
+        }
+        
+        .login-form input {
+            width: 100%;
+            padding: 0.8rem 1rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .login-form input:focus {
+            outline: none;
+            border-color: #0066cc;
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+        }
+        
+        .btn {
+            background-color: #0066cc;
+            color: white;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s;
+            font-weight: 500;
+        }
+        
+        .btn:hover {
+            background-color: #0052a3;
+        }
+        
+        .remember-forgot {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .remember-me {
+            display: flex;
+            align-items: center;
+        }
+        
+        .remember-me input {
+            width: auto;
+            margin-right: 0.5rem;
+        }
+        
+        .forgot-password a {
+            color: #0066cc;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+        
+        .login-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .login-footer a {
+            color: #0066cc;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .security-tips {
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            color: #666;
+        }
+        
+        .security-tips h3 {
+            color: #0066cc;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .security-tips ul {
+            padding-left: 1.2rem;
+        }
+        
+        .security-tips li {
+            margin-bottom: 0.3rem;
+        }
+        
+        .language-selector {
+            text-align: right;
+            margin-bottom: 1rem;
+        }
+        
+        .language-selector select {
+            padding: 0.3rem 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+            font-size: 0.8rem;
+        }
+        
+        @media (max-width: 480px) {
+            .login-container {
+                padding: 1.5rem;
+                margin: 1rem;
+            }
+            
+            .logo img {
+                height: 50px;
+            }
+            
+            .logo h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="login-container">
+        <div class="language-selector">
+            <select>
+                <option value="en">English</option>
+                <option value="sw">Swahili</option>
+            </select>
+        </div>
+        
+        <div class="logo">
+            <img src="https://via.placeholder.com/150x60?text=MediCare+Kenya" alt="MediCare Kenya Logo">
+            <h1>Medicare</h1>
+            <p>Access your pharmacy management system</p>
+        </div>
+        
+        <form class="login-form" id="inventoryLoginForm" action='log.php'>
+            <div class="form-group">
+                <label for="username"><i class="fas fa-user"></i> Username</label>
+                <input type="text" id="username" placeholder="Enter your username" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password"><i class="fas fa-lock"></i> Password</label>
+                <input type="password" id="password" placeholder="Enter your password" required>
+            </div>
+            
+            <div class="remember-forgot">
+                <div class="remember-me">
+                    <input type="checkbox" id="rememberMe">
+                    <label for="rememberMe">Remember me</label>
+                </div>
+                <div class="forgot-password">
+                    <a href="#">Forgot password?</a>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn">
+                <i class="fas fa-sign-in-alt"></i> Login
+            </button>
+            
+            <div class="security-tips">
+                <h3><i class="fas fa-shield-alt"></i> Security Tips:</h3>
+                <ul>
+                    <li>Never share your login credentials</li>
+                    <li>Always log out after your session</li>
+                    <li>Ensure you're on the correct website</li>
+                </ul>
+            </div>
+        </form>
+        
+        <div class="login-footer">
+            <p>Need help? Contact <a href="mailto:support@medicare.co.ke">support@medicare.co.ke</a></p>
+            <p>&copy; 2025 MediCare Kenya. All rights reserved.</p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('inventoryLoginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form values
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const rememberMe = document.getElementById('rememberMe').checked;
+            
+            // Simple validation
+            if (!username || !password) {
+                alert('Please enter both username and password');
+                return;
+            }
+            
+            // In a real application, you would:
+            // 1. Validate credentials with backend
+            // 2. Handle remember me functionality
+            // 3. Redirect to inventory dashboard on success
+            
+            // For demo purposes, we'll simulate a successful login
+            console.log('Login attempt:', { username, password, rememberMe });
+            
+            // Redirect to inventory dashboard
+            window.location.href = 'inventory-dashboard.html';
+            
+            // In production, you would NEVER log credentials to console
+        });
+        
+        // Language selector functionality
+        document.querySelector('.language-selector select').addEventListener('change', function() {
+            // In a real app, this would change the language
+            console.log('Language changed to:', this.value);
+        });
+    </script>
+</body>
+</html>

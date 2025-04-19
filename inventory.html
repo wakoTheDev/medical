@@ -1,0 +1,662 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-pharmacy</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        body {
+            background-color: #f5f9ff;
+            color: #333;
+        }
+        
+        header {
+            background-color: #0066cc;
+            color: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-info img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 0.8rem;
+        }
+        
+        .container {
+            display: flex;
+            min-height: calc(100vh - 70px);
+        }
+        
+        .sidebar {
+            width: 250px;
+            background: white;
+            padding: 1.5rem;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+            margin-top: 2rem;
+        }
+        
+        .sidebar-menu li {
+            margin-bottom: 1rem;
+        }
+        
+        .sidebar-menu a {
+            color: #333;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            padding: 0.5rem;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        
+        .sidebar-menu a:hover, .sidebar-menu a.active {
+            background-color: #e6f0ff;
+            color: #0066cc;
+        }
+        
+        .sidebar-menu i {
+            margin-right: 0.8rem;
+            font-size: 1.2rem;
+        }
+        
+        .main-content {
+            flex: 1;
+            padding: 2rem;
+        }
+        
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .section-title {
+            font-size: 1.8rem;
+            color: #0066cc;
+        }
+        
+        .btn {
+            background-color: #0066cc;
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 5px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s;
+            display: inline-flex;
+            align-items: center;
+        }
+        
+        .btn i {
+            margin-right: 0.5rem;
+        }
+        
+        .btn:hover {
+            background-color: #0052a3;
+        }
+        
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #0066cc;
+            color: #0066cc;
+        }
+        
+        .btn-outline:hover {
+            background-color: #e6f0ff;
+        }
+        
+        .btn-danger {
+            background-color: #dc3545;
+        }
+        
+        .btn-danger:hover {
+            background-color: #c82333;
+        }
+        
+        .search-filter {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            gap: 1rem;
+        }
+        
+        .search-box {
+            flex: 1;
+            position: relative;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 0.8rem 1rem 0.8rem 2.5rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #777;
+        }
+        
+        .filter-dropdown {
+            width: 200px;
+        }
+        
+        .filter-dropdown select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+            background-color: white;
+        }
+        
+        .inventory-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .inventory-table th, 
+        .inventory-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .inventory-table th {
+            background-color: #0066cc;
+            color: white;
+            font-weight: 500;
+        }
+        
+        .inventory-table tr:last-child td {
+            border-bottom: none;
+        }
+        
+        .inventory-table tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .stock-low {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        
+        .stock-ok {
+            color: #28a745;
+            font-weight: bold;
+        }
+        
+        .stock-out {
+            color: #6c757d;
+            font-weight: bold;
+        }
+        
+        .action-btns {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+            gap: 0.5rem;
+        }
+        
+        .pagination-btn {
+            padding: 0.5rem 0.8rem;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .pagination-btn.active {
+            background-color: #0066cc;
+            color: white;
+            border-color: #0066cc;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 500px;
+            padding: 2rem;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-title {
+            font-size: 1.5rem;
+            color: #0066cc;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #777;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .currency {
+            font-weight: bold;
+        }
+        
+        @media (max-width: 992px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            .sidebar {
+                width: 100%;
+            }
+            
+            .inventory-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .search-filter {
+                flex-direction: column;
+            }
+            
+            .filter-dropdown {
+                width: 100%;
+            }
+            
+            .action-btns {
+                flex-direction: column;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <header>
+        <div class="logo">E-pharmacy</div>
+        <div class="user-info">
+            <img src="https://ui-avatars.com/api/?name=Admin+User&background=0066cc&color=fff" alt="Admin">
+      <!--      <span>Admin User</span>  -->
+        </div>
+    </header>
+    
+    <div class="container">
+        <aside class="sidebar">
+            <ul class="sidebar-menu">
+                <li><a href="#"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                <li><a href="#" class="active"><i class="fas fa-boxes"></i> Inventory</a></li>
+                <li><a href="#"><i class="fas fa-clipboard-list"></i> Orders</a></li>
+                <li><a href="#"><i class="fas fa-users"></i> Customers</a></li>
+                <li><a href="#"><i class="fas fa-user-md"></i> Doctors</a></li>
+                <li><a href="#"><i class="fas fa-chart-line"></i> Reports</a></li>
+                <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
+                <li><a href="#"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            </ul>
+        </aside>
+        
+        <main class="main-content">
+            <div class="page-header">
+                <h1 class="section-title">Inventory Management</h1>
+                <button class="btn" id="addMedicineBtn">
+                    <i class="fas fa-plus"></i> Add Medicine
+                </button>
+            </div>
+            
+            <div class="search-filter">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search medicines...">
+                </div>
+                <div class="filter-dropdown">
+                    <select>
+                        <option>All Categories</option>
+                        <option>Pain Relief</option>
+                        <option>Antibiotics</option>
+                        <option>Antimalarials</option>
+                        <option>Antiretrovirals</option>
+                        <option>Vitamins</option>
+                        <option>Cold & Flu</option>
+                        <option>Allergy</option>
+                        <option>Digestive Health</option>
+                    </select>
+                </div>
+            </div>
+            
+            <table class="inventory-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Medicine Name</th>
+                        <th>Category</th>
+                        <th>Batch No.</th>
+                        <th>Expiry Date</th>
+                        <th>Price (KSh)</th>
+                        <th>Stock</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>MED1001</td>
+                        <td>Panadol Extra</td>
+                        <td>Pain Relief</td>
+                        <td>KE2023-01</td>
+                        <td>2024-06-30</td>
+                        <td><span class="currency">KSh</span> 120</td>
+                        <td>45</td>
+                        <td class="stock-ok">In Stock</td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="btn-outline"><i class="fas fa-edit"></i></button>
+                                <button class="btn-outline"><i class="fas fa-eye"></i></button>
+                                <button class="btn-danger"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>MED1002</td>
+                        <td>Artemether/Lumefantrine</td>
+                        <td>Antimalarial</td>
+                        <td>KE2023-05</td>
+                        <td>2024-09-15</td>
+                        <td><span class="currency">KSh</span> 350</td>
+                        <td>32</td>
+                        <td class="stock-ok">In Stock</td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="btn-outline"><i class="fas fa-edit"></i></button>
+                                <button class="btn-outline"><i class="fas fa-eye"></i></button>
+                                <button class="btn-danger"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>MED1003</td>
+                        <td>Coartem</td>
+                        <td>Antimalarial</td>
+                        <td>KE2023-02</td>
+                        <td>2024-03-31</td>
+                        <td><span class="currency">KSh</span> 420</td>
+                        <td>3</td>
+                        <td class="stock-low">Low Stock</td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="btn-outline"><i class="fas fa-edit"></i></button>
+                                <button class="btn-outline"><i class="fas fa-eye"></i></button>
+                                <button class="btn-danger"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>MED1004</td>
+                        <td>Cetirizine</td>
+                        <td>Allergy</td>
+                        <td>KE2023-03</td>
+                        <td>2024-05-20</td>
+                        <td><span class="currency">KSh</span> 85</td>
+                        <td>0</td>
+                        <td class="stock-out">Out of Stock</td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="btn-outline"><i class="fas fa-edit"></i></button>
+                                <button class="btn-outline"><i class="fas fa-eye"></i></button>
+                                <button class="btn-danger"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>MED1005</td>
+                        <td>Amoxicillin</td>
+                        <td>Antibiotics</td>
+                        <td>KE2023-04</td>
+                        <td>2024-08-10</td>
+                        <td><span class="currency">KSh</span> 150</td>
+                        <td>18</td>
+                        <td class="stock-ok">In Stock</td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="btn-outline"><i class="fas fa-edit"></i></button>
+                                <button class="btn-outline"><i class="fas fa-eye"></i></button>
+                                <button class="btn-danger"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>MED1006</td>
+                        <td>Dolutegravir</td>
+                        <td>Antiretroviral</td>
+                        <td>KE2023-06</td>
+                        <td>2025-01-15</td>
+                        <td><span class="currency">KSh</span> 1,200</td>
+                        <td>25</td>
+                        <td class="stock-ok">In Stock</td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="btn-outline"><i class="fas fa-edit"></i></button>
+                                <button class="btn-outline"><i class="fas fa-eye"></i></button>
+                                <button class="btn-danger"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>MED1007</td>
+                        <td>Vitamin C</td>
+                        <td>Vitamins</td>
+                        <td>KE2023-07</td>
+                        <td>2024-11-30</td>
+                        <td><span class="currency">KSh</span> 95</td>
+                        <td>12</td>
+                        <td class="stock-ok">In Stock</td>
+                        <td>
+                            <div class="action-btns">
+                                <button class="btn-outline"><i class="fas fa-edit"></i></button>
+                                <button class="btn-outline"><i class="fas fa-eye"></i></button>
+                                <button class="btn-danger"><i class="fas fa-trash"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="pagination">
+                <button class="pagination-btn"><i class="fas fa-angle-left"></i></button>
+                <button class="pagination-btn active">1</button>
+                <button class="pagination-btn">2</button>
+                <button class="pagination-btn">3</button>
+                <button class="pagination-btn"><i class="fas fa-angle-right"></i></button>
+            </div>
+        </main>
+    </div>
+    
+    <!-- Add Medicine Modal -->
+    <div class="modal" id="addMedicineModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Add New Medicine</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <form id="addMedicineForm">
+                <div class="form-group">
+                    <label for="medicineName">Medicine Name</label>
+                    <input type="text" id="medicineName" placeholder="Enter medicine name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="medicineCategory">Category</label>
+                    <select id="medicineCategory" required>
+                        <option value="">Select category</option>
+                        <option value="Pain Relief">Pain Relief</option>
+                        <option value="Antibiotics">Antibiotics</option>
+                        <option value="Antimalarials">Antimalarials</option>
+                        <option value="Antiretrovirals">Antiretrovirals</option>
+                        <option value="Vitamins">Vitamins</option>
+                        <option value="Cold & Flu">Cold & Flu</option>
+                        <option value="Allergy">Allergy</option>
+                        <option value="Digestive Health">Digestive Health</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="batchNumber">Batch Number</label>
+                    <input type="text" id="batchNumber" placeholder="Enter batch number (e.g., KE2023-01)" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="expiryDate">Expiry Date</label>
+                    <input type="date" id="expiryDate" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="price">Price (KSh)</label>
+                    <input type="number" id="price" step="1" min="0" placeholder="Enter price in KSh" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="stockQuantity">Stock Quantity</label>
+                    <input type="number" id="stockQuantity" min="0" placeholder="Enter quantity" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="description">Description</label>
+                    <textarea id="description" placeholder="Enter medicine description"></textarea>
+                </div>
+                
+                <div class="form-actions">
+                    <button type="button" class="btn-outline close-modal">Cancel</button>
+                    <button type="submit" class="btn">Add Medicine</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Modal functionality
+        const addMedicineBtn = document.getElementById('addMedicineBtn');
+        const addMedicineModal = document.getElementById('addMedicineModal');
+        const closeModalBtns = document.querySelectorAll('.close-modal');
+        
+        addMedicineBtn.addEventListener('click', function() {
+            addMedicineModal.style.display = 'flex';
+        });
+        
+        closeModalBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                addMedicineModal.style.display = 'none';
+            });
+        });
+        
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            if (event.target === addMedicineModal) {
+                addMedicineModal.style.display = 'none';
+            }
+        });
+        
+        // Form submission
+        document.getElementById('addMedicineForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            // In a real app, you would send this data to the server
+            alert('Medicine added successfully!');
+            addMedicineModal.style.display = 'none';
+            // Reset form
+            this.reset();
+        });
+        
+        // Format currency display
+        document.querySelectorAll('.currency').forEach(el => {
+            const amount = parseFloat(el.nextSibling.textContent.trim());
+            if (!isNaN(amount)) {
+                el.nextSibling.textContent = amount.toLocaleString('en-KE');
+            }
+        });
+    </script>
+</body>
+</html>

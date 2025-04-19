@@ -1,0 +1,14 @@
+[2025-04-18 15:13:08] Table 'medical.doctor_availability' doesn't exist
+[2025-04-18 15:17:13] Table 'medical.doctor_availability' doesn't exist
+[2025-04-18 15:18:17] Table 'medical.doctor_availability' doesn't exist
+[2025-04-18 15:28:07] Table 'medical.doctor_availability' doesn't exist
+[2025-04-18 15:29:32] Unknown column 'd.name' in 'field list'
+[2025-04-18 15:33:06] Unknown column 'd.name' in 'field list'
+[2025-04-18 15:40:59] Unknown column 'd.email' in 'field list'
+[2025-04-18 15:42:11] Unknown column 'd.active' in 'where clause'
+[2025-04-18 15:46:57] Unknown column 'a.available' in 'where clause'
+[2025-04-18 15:48:53] Unknown column 'a.availability_date' in 'on clause'
+[2025-04-18 15:49:01] Unknown column 'a.availability_date' in 'on clause'
+[2025-04-18 15:54:26] Unknown column 'd.name' in 'field list'
+[2025-04-18 15:55:56] Unknown column 'd.name' in 'field list'
+[2025-04-18 15:55:59] Unknown column 'd.name' in 'field list'

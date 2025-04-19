@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mtaani Doctor - Complete Booking System</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #2A5C82;
+            --secondary: #5BA4E6;
+            --accent: #FF6B6B;
+            --text: #2C3E50;
+            --background: #f8f9fa;
+            --radius: 12px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        body {
+            background: var(--background);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(rgba(42, 92, 130, 0.9), rgba(42, 92, 130, 0.9)),
+                        url('/api/placeholder/1200/400') center/cover;
+            padding: 80px 20px;
+            text-align: center;
+            color: white;
+            border-radius: var(--radius);
+            margin-bottom: 40px;
+        }
+
+        .hero h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        /* Services Grid */
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .service-card {
+            background: white;
+            padding: 30px;
+            border-radius: var(--radius);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            text-align: center;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .service-card.active {
+            border: 2px solid var(--accent);
+            background-color: rgba(91, 164, 230, 0.1);
+        }
+
+        .service-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        /* Form Styles */
+        .booking-form {
+            background: white;
+            padding: 40px;
+            border-radius: var(--radius);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            margin: 40px 0;
+            position: relative;
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .form-header h2 {
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--primary);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e7ff;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--secondary);
+            outline: none;
+            box-shadow: 0 0 8px rgba(91, 164, 230, 0.2);
+        }
+
+        button[type="submit"] {
+            background: var(--primary);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            transition: background 0.3s ease;
+            margin-bottom: 15px;
+        }
+
+        button[type="submit"]:hover {
+            background: var(--secondary);
+        }
+
+        .back-button {
+            background: #6c757d;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .back-button:hover {
+            background: #5a6268;
+        }
+
+        /* Notifications */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: var(--radius);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            display: none;
+            max-width: 300px;
+            z-index: 1000;
+            border-left: 4px solid;
+        }
+
+        .notification.success {
+            border-color: #27ae60;
+        }
+
+        .notification.error {
+            border-color: #e74c3c;
+        }
+
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            border-radius: var(--radius);
+        }
+
+        .input-error {
+            border-color: #e74c3c !important;
+        }
+
+        .error-message {
+            color: #e74c3c;
+            font-size: 0.9em;
+            margin-top: 5px;
+            display: none;
+        }
+
+        /* Form display control */
+        .form-container {
+            display: none;
+        }
+
+        .form-container.active {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .booking-form {
+                padding: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Hero Section -->
+        <section class="hero">
+            <h1>Home Medical Services</h1>
+            <p>Certified doctors available 24/7 in your area</p>
+            <a href="homepage.html" class="back-button">Back to Home Page</a>
+        </section>
+
+        <!-- Services Grid -->
+        <div class="services-grid">
+            <div class="service-card active" id="doctorVisitCard">
+                <i class="fas fa-user-md service-icon"></i>
+                <h3>Doctor Visit</h3>
+                <p>Professional medical consultation at home</p>
+            </div>
+            <div class="service-card" id="medicineDeliveryCard">
+                <i class="fas fa-prescription-bottle service-icon"></i>
+                <h3>Medicine Delivery</h3>
+                <p>Get prescriptions delivered to your door</p>
+            </div>
+            
+        </div>
+
+        <!-- Doctor Visit Form -->
+        <div class="form-container active" id="doctorVisitForm">
+            <form class="booking-form" id="bookingForm" action="booking_handler.php" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="request_type" value="doctor_visit">
+                <div class="form-header">
+                    <h2>Book Home Visit</h2>
+                    <p>Fill the form to request medical assistance</p>
+                </div>
+            
+                <div class="form-group">
+                    <label>Patient Name</label>
+                    <input type="text" id="patientName" name="patientName" placeholder="Full name" required>
+                    <div class="error-message" id="nameError">Please enter a valid name</div>
+                </div>
+            
+                <div class="form-group">
+                    <label>Contact Number</label>
+                    <input type="tel" id="patientPhone" name="patientPhone" placeholder="07XX XXX XXX" required pattern="[0-9]{10}">
+                    <div class="error-message" id="phoneError">Please enter a valid 10-digit number</div>
+                </div>
+            
+                <div class="form-group">
+                    <label>Preferred Time</label>
+                    <input type="datetime-local" id="appointmentTime" name="appointmentTime" required>
+                    <div class="error-message" id="timeError">Please select a future date</div>
+                </div>
+            
+                <div class="form-group">
+                    <label>Health Concerns</label>
+                    <textarea id="patientNotes" name="patientNotes" rows="3" placeholder="Describe symptoms or special requirements"></textarea>
+                </div>
+            
+                <button type="submit">Request Doctor Visit</button>
+                <center><a href="homepage.html" class="back-button">Back to Home Page</a></center>
+            
+                <div class="loading-overlay" id="loadingOverlay">
+                    <i class="fas fa-spinner fa-spin fa-2x"></i>
+                </div>
+            </form>
+        </div>
+
+        <!-- Medicine Delivery Form -->
+        <div class="form-container" id="medicineDeliveryForm">
+            <form class="booking-form" id="medicineForm" action="booking_handler.php" method="post" enctype="multipart/form-data">
+                <input type="hidden" name="request_type" value="medicine_delivery">
+                <div class="form-header">
+                    <h2>Medicine Delivery Request</h2>
+                    <p>Fill the form to request medicine delivery to your home</p>
+                </div>
+            
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="customerName" name="customerName" placeholder="Full name" required>
+                    <div class="error-message" id="medicineNameError">Please enter a valid name</div>
+                </div>
+            
+                <div class="form-group">
+                    <label>Contact Number</label>
+                    <input type="tel" id="customerPhone" name="customerPhone" placeholder="07XX XXX XXX" required pattern="[0-9]{10}">
+                    <div class="error-message" id="medicinePhoneError">Please enter a valid 10-digit number</div>
+                </div>
+            
+                <div class="form-group">
+                    <label>Delivery Address</label>
+                    <textarea id="deliveryAddress" name="deliveryAddress" rows="2" placeholder="Enter your full address" required></textarea>
+                    <div class="error-message" id="addressError">Please enter your delivery address</div>
+                </div>
+            
+                <div class="form-group">
+                    <label>Prescription Details</label>
+                    <textarea id="medicineDetails" name="medicineDetails" rows="3" placeholder="List the medicines needed or upload prescription image below"></textarea>
+                </div>
+            
+                <div class="form-group">
+                    <label>Upload Prescription (Optional)</label>
+                    <input type="file" id="prescriptionImage" name="prescriptionImage" accept="image/*">
+                </div>
+            
+                <div class="form-group">
+                    <label>Preferred Delivery Time</label>
+                    <input type="datetime-local" id="deliveryTime" name="deliveryTime" required>
+                    <div class="error-message" id="deliveryTimeError">Please select a future date</div>
+                </div>
+            
+                <button type="submit">Request Medicine Delivery</button>
+                <center><a href="homepage.html" class="back-button">Back to Home Page</a></center>
+            
+                <div class="loading-overlay" id="medicineLoadingOverlay">
+                    <i class="fas fa-spinner fa-spin fa-2x"></i>
+                </div>
+            </form>
+        </div>
+
+        <!-- Notification System -->
+        <div class="notification" id="notification">
+            <div class="notification-content"></div>
+        </div>
+    </div>
+
+    <script>
+        // Service cards
+        const doctorVisitCard = document.getElementById('doctorVisitCard');
+        const medicineDeliveryCard = document.getElementById('medicineDeliveryCard');
+        
+        // Form containers
+        const doctorVisitForm = document.getElementById('doctorVisitForm');
+        const medicineDeliveryForm = document.getElementById('medicineDeliveryForm');
+        
+        // Forms
+        const bookingForm = document.getElementById('bookingForm');
+        const medicineForm = document.getElementById('medicineForm');
+        
+        // Loading overlays
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const medicineLoadingOverlay = document.getElementById('medicineLoadingOverlay');
+        
+        // Notification
+        const notification = document.getElementById('notification');
+
+        // Set up event listeners for service cards
+        doctorVisitCard.addEventListener('click', () => {
+            // Update active states for cards
+            doctorVisitCard.classList.add('active');
+            medicineDeliveryCard.classList.remove('active');
+            
+            // Show doctor visit form, hide medicine form
+            doctorVisitForm.classList.add('active');
+            medicineDeliveryForm.classList.remove('active');
+        });
+
+        medicineDeliveryCard.addEventListener('click', () => {
+            // Update active states for cards
+            medicineDeliveryCard.classList.add('active');
+            doctorVisitCard.classList.remove('active');
+            
+            // Show medicine form, hide doctor visit form
+            medicineDeliveryForm.classList.add('active');
+            doctorVisitForm.classList.remove('active');
+        });
+
+        // Doctor Visit Form Validation
+        function validateName(inputId, errorId) {
+            const nameInput = document.getElementById(inputId);
+            const error = document.getElementById(errorId);
+            const isValid = nameInput.value.trim().length >= 3;
+            toggleError(nameInput, error, isValid);
+            return isValid;
+        }
+
+        function validatePhone(inputId, errorId) {
+            const phoneInput = document.getElementById(inputId);
+            const error = document.getElementById(errorId);
+            const isValid = /^07\d{8}$/.test(phoneInput.value);
+            toggleError(phoneInput, error, isValid);
+            return isValid;
+        }
+
+        function validateTime(inputId, errorId) {
+            const timeInput = document.getElementById(inputId);
+            const error = document.getElementById(errorId);
+            const isValid = new Date(timeInput.value) > new Date();
+            toggleError(timeInput, error, isValid);
+            return isValid;
+        }
+
+        function validateAddress() {
+            const addressInput = document.getElementById('deliveryAddress');
+            const error = document.getElementById('addressError');
+            const isValid = addressInput.value.trim().length >= 5;
+            toggleError(addressInput, error, isValid);
+            return isValid;
+        }
+
+        function toggleError(input, errorElement, isValid) {
+            input.classList.toggle('input-error', !isValid);
+            errorElement.style.display = isValid ? 'none' : 'block';
+        }
+
+        // Doctor visit form submission
+        bookingForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const isValid = validateName('patientName', 'nameError') && 
+                            validatePhone('patientPhone', 'phoneError') && 
+                            validateTime('appointmentTime', 'timeError');
+                            
+            if (!isValid) return;
+        
+            loadingOverlay.style.display = 'flex';
+            
+            try {
+                const formData = new FormData(bookingForm);
+                
+                const response = await fetch('booking_handler.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showNotification(result.message, 'success');
+                    bookingForm.reset();
+                } else {
+                    showNotification(result.message || 'An error occurred. Please try again.', 'error');
+                }
+            } catch (error) {
+                showNotification('Connection error. Please try again later.', 'error');
+                console.error('Error:', error);
+            } finally {
+                loadingOverlay.style.display = 'none';
+            }
+        });
+
+        // Medicine delivery form submission
+        medicineForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const isValid = validateName('customerName', 'medicineNameError') && 
+                            validatePhone('customerPhone', 'medicinePhoneError') && 
+                            validateTime('deliveryTime', 'deliveryTimeError') &&
+                            validateAddress();
+                            
+            if (!isValid) return;
+        
+            medicineLoadingOverlay.style.display = 'flex';
+            
+            try {
+                const formData = new FormData(medicineForm);
+                
+                // Add file if present
+                const prescriptionFile = document.getElementById('prescriptionImage').files[0];
+                if (prescriptionFile) {
+                    formData.append('prescriptionImage', prescriptionFile);
+                }
+                
+                const response = await fetch('booking_handler.php', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showNotification(result.message, 'success');
+                    medicineForm.reset();
+                } else {
+                    showNotification(result.message || 'An error occurred. Please try again.', 'error');
+                }
+            } catch (error) {
+                showNotification('Connection error. Please try again later.', 'error');
+                console.error('Error:', error);
+            } finally {
+                medicineLoadingOverlay.style.display = 'none';
+            }
+        });
+
+        function showNotification(message, type = 'success') {
+            notification.className = `notification ${type}`;
+            notification.querySelector('.notification-content').textContent = message;
+            notification.style.display = 'block';
+            
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 5000);
+        }
+
+        function formatDateTime(datetimeString) {
+            const options = { 
+                weekday: 'short', 
+                day: 'numeric', 
+                month: 'short', 
+                hour: '2-digit', 
+                minute: '2-digit' 
+            };
+            return new Date(datetimeString).toLocaleDateString('en-KE', options);
+        }
+
+        // Initialize datetime pickers with minimum time set to now
+        const appointmentTimeInput = document.getElementById('appointmentTime');
+        const deliveryTimeInput = document.getElementById('deliveryTime');
+        
+        const now = new Date();
+        const formattedNow = now.toISOString().slice(0, 16);
+        
+        appointmentTimeInput.min = formattedNow;
+        deliveryTimeInput.min = formattedNow;
+    </script>
+</body>
+</html>
