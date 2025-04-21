@@ -1,7 +1,7 @@
 <?php
 $host = 'localhost';
 $username = 'root';  
-$password = 'paul12wako';      
+$password = '';      
 $database = 'medical';  
 
 // Create connection

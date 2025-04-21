@@ -1,3 +1,48 @@
+<?php
+session_start();
+
+if (!isset($_SESSION['userId']) || $_SESSION['user_type'] !== 'delivery') {
+    header("Location: login.php");
+    exit;
+}
+
+$conn = new mysqli("localhost", "root", "", "medical");
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+// Get delivery_person_id for the logged-in user
+$user_id = $_SESSION['userId'];
+$person_sql = $conn->prepare("SELECT id FROM delivery_persons WHERE user_id = ?");
+$person_sql->bind_param("i", $user_id);
+$person_sql->execute();
+$person_result = $person_sql->get_result();
+$delivery_person_id = $person_result->fetch_assoc()['id'] ?? null;
+
+// Update delivery status if posted
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'])) {
+    $delivery_id = $_POST['delivery_id'];
+    $new_status = $_POST['status'];
+
+    $stmt = $conn->prepare("UPDATE medicine_deliveries SET status = ? WHERE id = ? AND delivery_person_id = ?");
+    $stmt->bind_param("sii", $new_status, $delivery_id, $delivery_person_id);
+    $stmt->execute();
+    header("Location: delivery.php");
+    exit;
+}
+
+// Fetch deliveries assigned to this delivery person
+$deliveries = [];
+if ($delivery_person_id) {
+    $sql = "SELECT * FROM medicine_deliveries WHERE delivery_person_id = ? ORDER BY request_date DESC";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $delivery_person_id);
+    $stmt->execute();
+    $deliveries = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -515,154 +560,61 @@
         <!-- Deliveries Container -->
         <div class="deliveries-container" id="deliveriesContainer">
             <!-- Delivery Card 1 -->
-            <div class="delivery-card">
-                <div class="delivery-header">
-                    <div class="delivery-id">#MD-2025041801</div>
-                    <div class="delivery-status status-pending">Pending</div>
-                </div>
-                <div class="delivery-body">
-                    <div class="delivery-info">
-                        <div class="delivery-label">Customer Name</div>
-                        <div class="delivery-value">James Kamau</div>
-                    </div>
-                    <div class="delivery-info">
-                        <div class="delivery-label">Delivery Address</div>
-                        <div class="delivery-value">123 Moi Avenue, Nairobi CBD</div>
-                    </div>
-                    <div class="delivery-info">
-                        <div class="delivery-label">Phone Number</div>
-                        <div class="delivery-value">0712345678</div>
-                    </div>
-                    <div class="delivery-info">
-                        <div class="delivery-label">Delivery Time</div>
-                        <div class="delivery-value">Today, 2:30 PM</div>
-                    </div>
-                    <div class="delivery-info">
-                        <div class="delivery-label">Items</div>
-                        <div class="delivery-value">Antibiotics, Pain relievers (x2), Vitamin C</div>
-                    </div>
-                </div>
-                <div class="delivery-actions">
-                    <button class="btn btn-outline btn-outline-primary" onclick="viewDeliveryDetails('MD-2025041801')">
-                        <i class="fas fa-eye"></i> View
-                    </button>
-                    <button class="btn btn-primary" onclick="startDelivery('MD-2025041801')">
-                        <i class="fas fa-play"></i> Start
-                    </button>
-                </div>
-            </div>
-
-            <!-- Delivery Card 2 -->
-            <div class="delivery-card">
-                <div class="delivery-header">
-                    <div class="delivery-id">#MD-2025041802</div>
-                    <div class="delivery-status status-in-progress">In Progress</div>
-                </div>
-                <div class="delivery-body">
-                    <div class="delivery-info">
-                        <div class="delivery-label">Customer Name</div>
-                        <div class="delivery-value">Nancy Wambui</div>
-                    </div>
-                    <div class="delivery-info">
-                        <div class="delivery-label">Delivery Address</div>
-                        <div class="delivery-value">45 Ngong Road, Near Junction Mall</div>
-                    </div>
-                    <div class="delivery-info">
-                        <div class="delivery-label">Phone Number</div>
-                        <div class="delivery-value">0723456789</div>
-                    </div>
-                    <div class="delivery-info">
-                        <div class="delivery-label">Delivery Time</div>
-                        <div class="delivery-value">Today, 3:15 PM</div>
-                    </div>
-                    <div class="delivery-info">
-                        <div class="delivery-label">Items</div>
-                        <div class="delivery-value">Blood pressure medication, Inhaler</div>
-                    </div>
-                </div>
-                <div class="delivery-actions">
-                    <button class="btn btn-warning" onclick="reportIssue('MD-2025041802')">
-                        <i class="fas fa-exclamation-triangle"></i> Issue
-                    </button>
-                    <button class="btn btn-success" onclick="completeDelivery('MD-2025041802')">
-                        <i class="fas fa-check"></i> Complete
-                    </button>
-                </div>
-            </div>
-
-            <!-- Delivery Card 3 -->
-            <div class="delivery-card">
-                <div class="delivery-header">
-                    <div class="delivery-id">#MD-2025041803</div>
-                    <div class="delivery-status status-pending">Pending</div>
-                </div>
-                <div class="delivery-body">
-                    <div class="delivery-info">
-                        <div class="delivery-label">Customer Name</div>
-                        <div class="delivery-value">Peter Ochieng</div>
-                    </div>
-                    <div class="delivery-info">
-                        <div class="delivery-label">Delivery Address</div>
-                        <div class="delivery-value">78 Thika Road, Near Garden City</div>
-                    </div>
-                    <div class="delivery-info">
-                        <div class="delivery-label">Phone Number</div>
-                        <div class="delivery-value">0734567890</div>
-                    </div>
-                    <div class="delivery-info">
-                        <div class="delivery-label">Delivery Time</div>
-                        <div class="delivery-value">Today, 4:00 PM</div>
-                    </div>
-                    <div class="delivery-info">
-                        <div class="delivery-label">Items</div>
-                        <div class="delivery-value">Insulin, Syringes (x10), Glucose monitor</div>
-                    </div>
-                </div>
-                <div class="delivery-actions">
-                    <button class="btn btn-outline btn-outline-primary" onclick="viewDeliveryDetails('MD-2025041803')">
-                        <i class="fas fa-eye"></i> View
-                    </button>
-                    <button class="btn btn-primary" onclick="startDelivery('MD-2025041803')">
-                        <i class="fas fa-play"></i> Start
-                    </button>
-                </div>
-            </div>
-
-            <!-- Delivery Card 4 -->
-            <div class="delivery-card">
-                <div class="delivery-header">
-                    <div class="delivery-id">#MD-2025041804</div>
-                    <div class="delivery-status status-delivered">Delivered</div>
-                </div>
-                <div class="delivery-body">
-                    <div class="delivery-info">
-                        <div class="delivery-label">Customer Name</div>
-                        <div class="delivery-value">Grace Muthoni</div>
-                    </div>
-                    <div class="delivery-info">
-                        <div class="delivery-label">Delivery Address</div>
-                        <div class="delivery-value">26 Westlands, Near Sarit Centre</div>
-                    </div>
-                    <div class="delivery-info">
-                        <div class="delivery-label">Phone Number</div>
-                        <div class="delivery-value">0745678901</div>
-                    </div>
-                    <div class="delivery-info">
-                        <div class="delivery-label">Delivered At</div>
-                        <div class="delivery-value">Today, 11:45 AM</div>
-                    </div>
-                    <div class="delivery-info">
-                        <div class="delivery-label">Items</div>
-                        <div class="delivery-value">Prenatal vitamins, Calcium supplements</div>
-                    </div>
-                </div>
-                <div class="delivery-actions">
-                    <button class="btn btn-outline btn-outline-primary" onclick="viewDeliveryDetails('MD-2025041804')">
-                        <i class="fas fa-eye"></i> View Details
-                    </button>
-                </div>
+            <?php foreach ($deliveries as $delivery): ?>
+    <div class="delivery-card">
+        <div class="delivery-header">
+            <div class="delivery-id">#MD-<?= $delivery['id'] ?></div>
+            <div class="delivery-status status-<?= str_replace(' ', '-', strtolower($delivery['status'])) ?>">
+                <?= ucfirst($delivery['status']) ?>
             </div>
         </div>
+        <div class="delivery-body">
+            <div class="delivery-info">
+                <div class="delivery-label">Customer Name</div>
+                <div class="delivery-value"><?= htmlspecialchars($delivery['customer_name']) ?></div>
+            </div>
+            <div class="delivery-info">
+                <div class="delivery-label">Delivery Address</div>
+                <div class="delivery-value"><?= htmlspecialchars($delivery['delivery_address']) ?></div>
+            </div>
+            <div class="delivery-info">
+                <div class="delivery-label">Phone Number</div>
+                <div class="delivery-value"><?= htmlspecialchars($delivery['customer_phone']) ?></div>
+            </div>
+            <div class="delivery-info">
+                <div class="delivery-label">Delivery Time</div>
+                <div class="delivery-value"><?= date("D, H:i A", strtotime($delivery['delivery_time'])) ?></div>
+            </div>
+            <div class="delivery-info">
+                <div class="delivery-label">Items</div>
+                <div class="delivery-value"><?= nl2br(htmlspecialchars($delivery['medicine_details'])) ?></div>
+            </div>
+        </div>
+        <div class="delivery-actions">
+            <?php if ($delivery['status'] === 'pending'): ?>
+                <form method="post">
+                    <input type="hidden" name="delivery_id" value="<?= $delivery['id'] ?>">
+                    <input type="hidden" name="status" value="in-progress">
+                    <button type="submit" name="update_status" class="btn btn-primary">
+                        <i class="fas fa-play"></i> Start
+                    </button>
+                </form>
+            <?php elseif ($delivery['status'] === 'in-progress'): ?>
+                <form method="post">
+                    <input type="hidden" name="delivery_id" value="<?= $delivery['id'] ?>">
+                    <input type="hidden" name="status" value="delivered">
+                    <button type="submit" name="update_status" class="btn btn-success">
+                        <i class="fas fa-check"></i> Complete
+                    </button>
+                </form>
+            <?php else: ?>
+                <button class="btn btn-outline btn-outline-primary" onclick="viewDeliveryDetails('MD-<?= $delivery['id'] ?>')">
+                    <i class="fas fa-eye"></i> View
+                </button>
+            <?php endif; ?>
+        </div>
+    </div>
+<?php endforeach; ?>
     </div>
 
     <!-- Update Status Modal -->
@@ -874,8 +826,7 @@
         document.getElementById('searchInput').addEventListener('input', filterDeliveries);
         
         function filterDeliveries() {
-            // In a real app, this would trigger an API call with filters
-            // For demo purposes, we'll just show a notification
+
             const sort = document.getElementById('sortFilter').value;
             const date = document.getElementById('dateFilter').value;
             const search = document.getElementById('searchInput').value;

@@ -5,7 +5,7 @@ session_start();
 $host = "localhost";       // or your DB host
 $dbname = "medical";   // your database name
 $dbuser = "root";          // your DB username
-$dbpass = "paul12wako";              // your DB password
+$dbpass = "";              // your DB password
 
 try {
     // Connect to the database using PDO

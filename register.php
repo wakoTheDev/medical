@@ -10,7 +10,7 @@ if (isset($_POST['register'])) {
     $address = $_POST['address'];
     $user_type = $_POST['user_type'];
 
-    $con = new mysqli('localhost', 'root', 'paul12wako', 'medical');
+    $con = new mysqli('localhost', 'root', '', 'medical');
     if ($con->connect_error) die("Connection failed: " . $con->connect_error);
 
     if ($password !== $confirm_password) {

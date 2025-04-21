@@ -54,7 +54,7 @@ if (isset($_POST['login'])) {
     $pass = $_POST['password'];
 
     // Database connection
-    $con = new mysqli('localhost', 'root', 'paul12wako', 'medical');
+    $con = new mysqli('localhost', 'root', '', 'medical');
 
     if ($con->connect_error) {
         die("Connection failed: " . $con->connect_error);
@@ -82,20 +82,20 @@ if (isset($_POST['login'])) {
             // Redirect based on user_type from the database
             switch ($data['user_type']) {
                 case 'admin':
-                    header('Location: admin.html');
+                    header('Location: admin.php');
                     break;
                 case 'doctor':
                     header('Location: doctor.php');
                     break;
                 case 'delivery':
-                    header('Location: delivery.html');
+                    header('Location: delivery.php');
                     break;
                 case 'customer':
-                    header('Location: customer.html');
+                    header('Location: customer.php');
                     break;
                 default:
                     // Fallback to customer if user_type is not specified
-                    header('Location: customer.html');
+                    header('Location: customer.php');
                     break;
             }
             exit;
